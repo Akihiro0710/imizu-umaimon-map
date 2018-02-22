@@ -25,6 +25,12 @@ foreach ($bot->parseEvent() as $event) {
     $messageBuilder = (new MultiMessageBuilder())
         ->add(new StickerMessageBuilder(1, 17))
         ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
+  } else if ($event->getText() === 'こんばんは') {
+    $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
+    $displayName = $profile['displayName'];
+    $messageBuilder = (new MultiMessageBuilder())
+        ->add(new StickerMessageBuilder(1, 17))
+        ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
   } else {
     $messageBuilder = (new MultiMessageBuilder())
         ->add(new TextMessageBuilder('「こんにちは」と呼びかけて下さいね！'))
