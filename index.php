@@ -23,6 +23,10 @@ foreach ($bot->parseEvent() as $event) {
   $displayName = $profile['displayName'];
   $messageBuilder = new MultiMessageBuilder();
   switch ($event->getText()) {
+    case 'ユーザID':
+      $messageBuilder = $messageBuilder
+          ->add(new TextMessageBuilder("{$displayName}さんのユーザIDは{$event->getUserId()}です"));
+      break;
     case 'こんにちは':
       $messageBuilder = $messageBuilder
           ->add(new StickerMessageBuilder(1, 17))
