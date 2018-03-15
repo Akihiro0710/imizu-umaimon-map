@@ -12,7 +12,7 @@ require_once __DIR__ . '/Bot.php';
 
 $bot = new Bot();
 $data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
-//$keys = array_keys($data);
+$keys = array_keys($data);
 foreach ($bot->parseEvent() as $event) {
   if (!($event instanceof MessageEvent)) {
     continue;
@@ -24,19 +24,15 @@ foreach ($bot->parseEvent() as $event) {
   $displayName = $profile['displayName'];
   $messageBuilder = new MultiMessageBuilder();
   $text = $event->getText();
-//  if (in_array($text, $keys)) {
-//    $content = $data[$text];
-//    $messageBuilder = $messageBuilder
-//        ->add(new LocationMessageBuilder($content['name'], $content['address'], $content['lat'], $content['lon']));
-//    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-//    continue;
-//  }
-  $content = $data['il_compagno'];
-  $messageBuilder = $messageBuilder
-      ->add(new TextMessageBuilder(var_export($content, true)));
-//      ->add(new LocationMessageBuilder($content->name, $content->address, $content->lat, $content->lon));
-  $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-  continue;
+  if (in_array($text, $keys)) {
+    $content = $data[$text];
+    $messageBuilder = $messageBuilder
+        ->add(new TextMessageBuilder($content['name'] . PHP_EOL . $content['business_hours'] . PHP_EOL . $content['tel']))
+        ->add(new TextMessageBuilder($content['summary']))
+        ->add(new LocationMessageBuilder($content['name'], $content['address'], $content['lat'], $content['lon']));
+    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+    continue;
+  }
   switch ($text) {
     case 'ユーザID':
       $messageBuilder = $messageBuilder
