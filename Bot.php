@@ -34,9 +34,7 @@ class Bot extends LINEBot
   {
     foreach ($this->parseEvent() as $event) {
       foreach ($this->listeners as $listener) {
-        if ($listener($event)) {
-          break;
-        }
+        $listener($event);
       }
     }
   }

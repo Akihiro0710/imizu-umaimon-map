@@ -1,6 +1,7 @@
 <?php
 
 use LINE\LINEBot\Event\MessageEvent;
+use LINE\LINEBot\Event\MessageEvent\LocationMessage;
 use LINE\LINEBot\Event\MessageEvent\TextMessage;
 use LINE\LINEBot\MessageBuilder\LocationMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
@@ -25,33 +26,49 @@ function showShopData($data)
 }
 
 $bot = new Bot();
-$bot->addListener(function ($event) use ($bot) {
-  $data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
-  $keys = array_keys($data);
+$data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
+$bot->addListener(function ($event) use ($data, $bot) {
   if (!($event instanceof MessageEvent)) {
-    return true;
+    return;
+  }
+  if ($event instanceof LocationMessage) {
+    $evLat = $event->getLatitude();
+    $evLon = $event->getLongitude();
+    $distances = [];
+    foreach ($data as $key => $value) {
+      $lat = $value->lat;
+      $lon = $value->lon;
+      $distances[$key] = sqrt(($lat - $evLat) ** 2 + ($lon - $evLon) ** 2);
+    }
+    sort($distances);
+    $key = array_keys($distances)[0];
+    $shop = $data[$key];
+    $messageBuilder = (new MultiMessageBuilder())
+        ->add(new TextMessageBuilder($shop['name'] . 'との距離は' . $distances[$key]));
+    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+    return;
   }
   if (!($event instanceof TextMessage)) {
-    return false;
+    return;
   }
   $text = $event->getText();
-  if (in_array($text, $keys)) {
-    $content = $data[$text];
-    $messageBuilder = showShopData($content);
-    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-  } else {
-    switch ($text) {
-      case 'うまいもん':
-        $content = $data[$keys[mt_rand(0, count($keys) - 1)]];
+  $keys = array_keys($data);
+  switch ($text) {
+    case 'うまいもん':
+      $content = $data[$keys[mt_rand(0, count($keys) - 1)]];
+      $messageBuilder = showShopData($content);
+      break;
+    default:
+      if (in_array($text, $keys)) {
+        $content = $data[$text];
         $messageBuilder = showShopData($content);
-        break;
-      default:
+      } else {
         $messageBuilder = (new MultiMessageBuilder())
             ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
             ->add(new StickerMessageBuilder(1, 4));
-    }
+      }
   }
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-  return false;
+  return;
 });
 $bot->execute();
