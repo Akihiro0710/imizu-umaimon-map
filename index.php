@@ -9,13 +9,19 @@ use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
-function createLocation($data)
+function showShopData($data)
 {
   $title = $data['name'];
+  $summary = $data['summary'];
+  $business_hours = $data['business_hours'];
+  $tel = $data['tel'];
   $address = $data['address'];
   $lat = $data['lat'];
   $lon = $data['lon'];
-  return new LocationMessageBuilder($title, $address, $lat, $lon);
+  return (new MultiMessageBuilder())
+      ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])))
+      ->add(new TextMessageBuilder($summary))
+      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
 }
 
 $bot = new Bot();
@@ -28,27 +34,22 @@ $bot->addListener(function ($event) use ($bot) {
   if (!($event instanceof TextMessage)) {
     return false;
   }
-  $messageBuilder = new MultiMessageBuilder();
   $text = $event->getText();
   if (in_array($text, $keys)) {
     $content = $data[$text];
-    $messageBuilder = $messageBuilder
-        ->add(new TextMessageBuilder($content['name'] . PHP_EOL . $content['business_hours'] . PHP_EOL . $content['tel']))
-        ->add(new TextMessageBuilder($content['summary']))
-        ->add(createLocation($content));
+    $messageBuilder = showShopData($content);
     $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-    return false;
-  }
-  switch ($text) {
-    case 'うまいもん':
-      $messageBuilder = $messageBuilder
-          ->add(new TextMessageBuilder('うまいもんを紹介します'))
-          ->add(new LocationMessageBuilder('射水市役所', '富山県射水市新開発４１０−１', 36.730544, 137.075451));
-      break;
-    default:
-      $messageBuilder = $messageBuilder
-          ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
-          ->add(new StickerMessageBuilder(1, 4));
+  } else {
+    switch ($text) {
+      case 'うまいもん':
+        $content = $data[$keys[mt_rand(0, count($keys - 1))]];
+        $messageBuilder = showShopData($content);
+        break;
+      default:
+        $messageBuilder = (new MultiMessageBuilder())
+            ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
+            ->add(new StickerMessageBuilder(1, 4));
+    }
   }
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
   return false;
