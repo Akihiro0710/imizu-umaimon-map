@@ -33,7 +33,7 @@ foreach ($bot->parseEvent() as $event) {
 //  }
   $content = $data[$text];
   $messageBuilder = $messageBuilder
-      ->add(new TextMessageBuilder(var_export($text, true)));
+      ->add(new TextMessageBuilder(var_export($content, true)));
 //      ->add(new LocationMessageBuilder($content->name, $content->address, $content->lat, $content->lon));
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
   continue;
