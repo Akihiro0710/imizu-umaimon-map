@@ -31,6 +31,12 @@ foreach ($bot->parseEvent() as $event) {
     $bot->replyMessage($event->getReplyToken(), $messageBuilder);
     continue;
   }
+  $content = $data[$text];
+  $messageBuilder = $messageBuilder
+      ->add(new TextMessageBuilder($text));
+//      ->add(new LocationMessageBuilder($content->name, $content->address, $content->lat, $content->lon));
+  $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+  continue;
   switch ($text) {
     case 'ユーザID':
       $messageBuilder = $messageBuilder
