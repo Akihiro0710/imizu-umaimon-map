@@ -11,7 +11,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
 
 $bot = new Bot();
-
+$data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
+$keys = array_keys($data);
 foreach ($bot->parseEvent() as $event) {
   if (!($event instanceof MessageEvent)) {
     continue;
@@ -22,7 +23,15 @@ foreach ($bot->parseEvent() as $event) {
   $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
   $displayName = $profile['displayName'];
   $messageBuilder = new MultiMessageBuilder();
-  switch ($event->getText()) {
+  $text = $event->getText();
+  if (in_array($text, $keys)) {
+    $content = $data[$text];
+    $messageBuilder = $messageBuilder
+        ->add(new LocationMessageBuilder($content->name, $content->address, $content->lat, $content->lon));
+    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+    continue;
+  }
+  switch ($text) {
     case 'ユーザID':
       $messageBuilder = $messageBuilder
           ->add(new TextMessageBuilder("{$displayName}さんのユーザIDは{$event->getUserId()}です"));
@@ -49,4 +58,3 @@ foreach ($bot->parseEvent() as $event) {
   }
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
 }
-
