@@ -42,7 +42,7 @@ $bot->addListener(function ($event) use ($bot) {
   } else {
     switch ($text) {
       case 'うまいもん':
-        $content = $data[$keys[mt_rand(0, count($keys - 1))]];
+        $content = $data[$keys[mt_rand(0, count($keys) - 1)]];
         $messageBuilder = showShopData($content);
         break;
       default:
