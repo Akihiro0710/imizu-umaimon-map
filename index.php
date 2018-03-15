@@ -9,19 +9,25 @@ use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
+function createLocation($data)
+{
+  $title = $data['name'];
+  $address = $data['address'];
+  $lat = $data['lat'];
+  $lon = $data['lon'];
+  return new LocationMessageBuilder($title, $address, $lat, $lon);
+}
 
 $bot = new Bot();
-$data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
-$keys = array_keys($data);
-foreach ($bot->parseEvent() as $event) {
+$bot->addListener(function ($event) use ($bot) {
+  $data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
+  $keys = array_keys($data);
   if (!($event instanceof MessageEvent)) {
-    continue;
+    return true;
   }
   if (!($event instanceof TextMessage)) {
-    continue;
+    return false;
   }
-  $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
-  $displayName = $profile['displayName'];
   $messageBuilder = new MultiMessageBuilder();
   $text = $event->getText();
   if (in_array($text, $keys)) {
@@ -29,25 +35,11 @@ foreach ($bot->parseEvent() as $event) {
     $messageBuilder = $messageBuilder
         ->add(new TextMessageBuilder($content['name'] . PHP_EOL . $content['business_hours'] . PHP_EOL . $content['tel']))
         ->add(new TextMessageBuilder($content['summary']))
-        ->add(new LocationMessageBuilder($content['name'], $content['address'], $content['lat'], $content['lon']));
+        ->add(createLocation($content));
     $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-    continue;
+    return false;
   }
   switch ($text) {
-    case 'ユーザID':
-      $messageBuilder = $messageBuilder
-          ->add(new TextMessageBuilder("{$displayName}さんのユーザIDは{$event->getUserId()}です"));
-      break;
-    case 'こんにちは':
-      $messageBuilder = $messageBuilder
-          ->add(new StickerMessageBuilder(1, 17))
-          ->add(new TextMessageBuilder("こんにちは！{$displayName}さん"));
-      break;
-    case 'こんばんは':
-      $messageBuilder = $messageBuilder
-          ->add(new StickerMessageBuilder(1, 17))
-          ->add(new TextMessageBuilder("こんにちは！{$displayName}さん"));
-      break;
     case 'うまいもん':
       $messageBuilder = $messageBuilder
           ->add(new TextMessageBuilder('うまいもんを紹介します'))
@@ -55,8 +47,10 @@ foreach ($bot->parseEvent() as $event) {
       break;
     default:
       $messageBuilder = $messageBuilder
-          ->add(new TextMessageBuilder('「こんにちは」と呼びかけて下さいね！'))
+          ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
           ->add(new StickerMessageBuilder(1, 4));
   }
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-}
+  return false;
+});
+$bot->execute();
