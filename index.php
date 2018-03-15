@@ -24,13 +24,13 @@ foreach ($bot->parseEvent() as $event) {
   $displayName = $profile['displayName'];
   $messageBuilder = new MultiMessageBuilder();
   $text = $event->getText();
-  if (in_array($text, $keys)) {
-    $content = $data[$text];
-    $messageBuilder = $messageBuilder
-        ->add(new LocationMessageBuilder($content->name, $content->address, $content->lat, $content->lon));
-    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
-    continue;
-  }
+//  if (in_array($text, $keys)) {
+//    $content = $data[$text];
+//    $messageBuilder = $messageBuilder
+//        ->add(new LocationMessageBuilder($content['name'], $content['address'], $content['lat'], $content['lon']));
+//    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+//    continue;
+//  }
   $content = $data[$text];
   $messageBuilder = $messageBuilder
       ->add(new TextMessageBuilder(var_export($content)));
