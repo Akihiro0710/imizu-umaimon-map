@@ -11,7 +11,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
 
 $bot = new Bot();
-$data = file_get_contents(__DIR__ . '/umaimon.json');
+$data = explode(",", file_get_contents(__DIR__ . '/umaimon.json'))[0];
 //$keys = array_keys($data);
 foreach ($bot->parseEvent() as $event) {
   if (!($event instanceof MessageEvent)) {
@@ -31,7 +31,7 @@ foreach ($bot->parseEvent() as $event) {
 //    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
 //    continue;
 //  }
-  $content = $data[$text];
+//  $content = $data[$text];
   $messageBuilder = $messageBuilder
       ->add(new TextMessageBuilder(var_export($data, true)));
 //      ->add(new LocationMessageBuilder($content->name, $content->address, $content->lat, $content->lon));
