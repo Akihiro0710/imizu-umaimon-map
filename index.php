@@ -11,8 +11,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
 
 $bot = new Bot();
-$data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
-$keys = array_keys($data);
+$data = file_get_contents(__DIR__ . '/umaimon.json');
+//$keys = array_keys($data);
 foreach ($bot->parseEvent() as $event) {
   if (!($event instanceof MessageEvent)) {
     continue;
