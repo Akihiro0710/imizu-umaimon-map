@@ -44,7 +44,8 @@ $bot->addListener(function ($event) use ($data, $bot) {
     $key = array_keys($distances)[0];
     $shop = $data[$key];
     $messageBuilder = (new MultiMessageBuilder())
-        ->add(new TextMessageBuilder($shop['name'] . 'との距離は' . $distances[$key]));
+        ->add(new TextMessageBuilder($shop['name'] . 'との距離は' . $distances[$key]))
+        ->add(new TextMessageBuilder(var_export($distances, true)));
     $bot->replyMessage($event->getReplyToken(), $messageBuilder);
     return;
   }
