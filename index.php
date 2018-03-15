@@ -40,7 +40,7 @@ $bot->addListener(function ($event) use ($data, $bot) {
       $lon = $value->lon * 1000000;
       $distances[$key] = ($lat - $evLat) ** 2 + ($lon - $evLon) ** 2;
     }
-    asort($distances);
+//    asort($distances);
     $key = array_keys($distances)[0];
     $shop = $data[$key];
     $messageBuilder = (new MultiMessageBuilder())
