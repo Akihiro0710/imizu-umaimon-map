@@ -36,9 +36,9 @@ $bot->addListener(function ($event) use ($data, $bot) {
     $evLon = $event->getLongitude() * 1000000;
     $distances = [];
     foreach ($data as $key => $value) {
-      $lat = $value->lat * 1000000;
-      $lon = $value->lon * 1000000;
-      $distances[$key] = ($lat - $evLat) ** 2 + ($lon - $evLon) ** 2;
+      $lat = $value->lat;
+      $lon = $value->lon;
+      $distances[$key] = $lat . ',' . $lon;
     }
 //    asort($distances);
     $key = array_keys($distances)[0];
