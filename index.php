@@ -20,19 +20,24 @@ foreach ($bot->parseEvent() as $event) {
   }
   $messageBuilder = new MultiMessageBuilder();
   switch ($event->getText()) {
-    case  'こんにちは':
+    case 'こんにちは':
       $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
       $displayName = $profile['displayName'];
       $messageBuilder = $messageBuilder
           ->add(new StickerMessageBuilder(1, 17))
           ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
       break;
-    case  'こんばんは':
+    case 'こんばんは':
       $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
       $displayName = $profile['displayName'];
       $messageBuilder = $messageBuilder
           ->add(new StickerMessageBuilder(1, 17))
           ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
+      break;
+    case 'うまいもん':
+      $messageBuilder = $messageBuilder
+          ->add(new StickerMessageBuilder(1, 17))
+          ->add(new TextMessageBuilder('うまいもんを紹介します'));
       break;
     default:
       $messageBuilder = $messageBuilder
