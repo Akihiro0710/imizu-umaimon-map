@@ -18,23 +18,26 @@ foreach ($bot->parseEvent() as $event) {
   if (!($event instanceof TextMessage)) {
     continue;
   }
-
-  if ($event->getText() === 'こんにちは') {
-    $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
-    $displayName = $profile['displayName'];
-    $messageBuilder = (new MultiMessageBuilder())
-        ->add(new StickerMessageBuilder(1, 17))
-        ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
-  } else if ($event->getText() === 'こんばんは') {
-    $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
-    $displayName = $profile['displayName'];
-    $messageBuilder = (new MultiMessageBuilder())
-        ->add(new StickerMessageBuilder(1, 17))
-        ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
-  } else {
-    $messageBuilder = (new MultiMessageBuilder())
-        ->add(new TextMessageBuilder('「こんにちは」と呼びかけて下さいね！'))
-        ->add(new StickerMessageBuilder(1, 4));
+  $messageBuilder = new MultiMessageBuilder();
+  switch ($event->getText()) {
+    case  'こんにちは':
+      $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
+      $displayName = $profile['displayName'];
+      $messageBuilder = $messageBuilder
+          ->add(new StickerMessageBuilder(1, 17))
+          ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
+      break;
+    case  'こんばんは':
+      $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
+      $displayName = $profile['displayName'];
+      $messageBuilder = $messageBuilder
+          ->add(new StickerMessageBuilder(1, 17))
+          ->add(new TextMessageBuilder('こんにちは！' . $displayName . 'さん'));
+      break;
+    default:
+      $messageBuilder = $messageBuilder
+          ->add(new TextMessageBuilder('「こんにちは」と呼びかけて下さいね！'))
+          ->add(new StickerMessageBuilder(1, 4));
   }
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
 }
