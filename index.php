@@ -32,12 +32,12 @@ $bot->addListener(function ($event) use ($data, $bot) {
     return;
   }
   if ($event instanceof LocationMessage) {
-    $evLat = $event->getLatitude() * 1000000;
-    $evLon = $event->getLongitude() * 1000000;
+    $evLat = $event->getLatitude();
+    $evLon = $event->getLongitude();
     $distances = [];
     foreach ($data as $key => $value) {
-      $lat = $value->lat;
-      $lon = $value->lon;
+      $lat = $value['lat'];
+      $lon = $value['lon'];
       $distances[$key] = $lat . ',' . $lon;
     }
 //    asort($distances);
