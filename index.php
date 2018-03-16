@@ -1,8 +1,10 @@
 <?php
 
+use LINE\LINEBot\Event\BaseEvent;
 use LINE\LINEBot\Event\MessageEvent;
 use LINE\LINEBot\Event\MessageEvent\LocationMessage;
 use LINE\LINEBot\Event\MessageEvent\TextMessage;
+use LINE\LINEBot\Event\PostbackEvent;
 use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\LocationMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
@@ -11,6 +13,7 @@ use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
+use LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
 use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -19,9 +22,10 @@ require_once __DIR__ . '/Bot.php';
 
 $bot = new Bot();
 $data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
-function showShopData($data, $key)
+function showShopData(Bot $bot, BaseEvent $event, $data, $key)
 {
   $shop = $data[$key];
+  $shop['id'] = $key;
   $title = $shop['name'];
   $summary = $shop['summary'];
   $business_hours = $shop['business_hours'];
@@ -30,7 +34,7 @@ function showShopData($data, $key)
   $lat = $shop['lat'];
   $lon = $shop['lon'];
   $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
-  return (new MultiMessageBuilder())
+  $messageBuilder = (new MultiMessageBuilder())
       ->add(new TemplateMessageBuilder(
           $title . PHP_EOL . $business_hours . PHP_EOL . $tel,
           new ButtonTemplateBuilder(
@@ -38,12 +42,14 @@ function showShopData($data, $key)
               $business_hours,
               $image . '.jpg',
               [
-                  new UriTemplateActionBuilder($tel, 'tel:' . $tel)
+                  new UriTemplateActionBuilder($tel, 'tel:' . $tel),
+                  new PostbackTemplateActionBuilder('詳細を見る', json_encode($shop))
               ]
           )
       ))
       ->add(new TextMessageBuilder($summary))
       ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
+  $bot->replyMessage($event->getReplyToken(), $messageBuilder);
 }
 
 $bot->addListener(function ($event) use ($data, $bot) {
@@ -61,8 +67,11 @@ $bot->addListener(function ($event) use ($data, $bot) {
     }
     asort($distances);
     $key = array_keys($distances)[0];
-    $messageBuilder = showShopData($data, $key);
-    $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+    showShopData($bot, $event, $data, $key);
+    return;
+  }
+  if ($event instanceof PostbackEvent) {
+    $event->getPostbackData();
     return;
   }
   if (!($event instanceof TextMessage)) {
@@ -73,18 +82,18 @@ $bot->addListener(function ($event) use ($data, $bot) {
   switch ($text) {
     case 'うまいもん':
       $key = $keys[mt_rand(0, count($keys) - 1)];
-      $messageBuilder = showShopData($data, $key);
+      showShopData($bot, $event, $data, $key);
       break;
     default:
       if (in_array($text, $keys)) {
-        $messageBuilder = showShopData($data, $text);
+        showShopData($bot, $event, $data, $text);
       } else {
         $messageBuilder = (new MultiMessageBuilder())
             ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
             ->add(new StickerMessageBuilder(1, 4));
+        $bot->replyMessage($event->getReplyToken(), $messageBuilder);
       }
   }
-  $bot->replyMessage($event->getReplyToken(), $messageBuilder);
   return;
 });
 $bot->execute();
