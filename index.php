@@ -43,9 +43,7 @@ $bot->addListener(function ($event) use ($data, $bot) {
     asort($distances);
     $key = array_keys($distances)[0];
     $shop = $data[$key];
-    $messageBuilder = (new MultiMessageBuilder())
-        ->add(new TextMessageBuilder($shop['name'] . 'との距離は' . $distances[$key]))
-        ->add(new TextMessageBuilder(var_export($distances, true)));
+    $messageBuilder = showShopData($shop);
     $bot->replyMessage($event->getReplyToken(), $messageBuilder);
     return;
   }
@@ -56,13 +54,13 @@ $bot->addListener(function ($event) use ($data, $bot) {
   $keys = array_keys($data);
   switch ($text) {
     case 'うまいもん':
-      $content = $data[$keys[mt_rand(0, count($keys) - 1)]];
-      $messageBuilder = showShopData($content);
+      $shop = $data[$keys[mt_rand(0, count($keys) - 1)]];
+      $messageBuilder = showShopData($shop);
       break;
     default:
       if (in_array($text, $keys)) {
-        $content = $data[$text];
-        $messageBuilder = showShopData($content);
+        $shop = $data[$text];
+        $messageBuilder = showShopData($shop);
       } else {
         $messageBuilder = (new MultiMessageBuilder())
             ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
