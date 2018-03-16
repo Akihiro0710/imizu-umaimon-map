@@ -53,6 +53,11 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
 }
 
 $bot->addListener(function ($event) use ($data, $bot) {
+  if ($event instanceof PostbackEvent) {
+    $data = json_decode($event->getPostbackData(), true);
+    showShopData($bot, $event, $data, $data['id']);
+    return;
+  }
   if (!($event instanceof MessageEvent)) {
     return;
   }
@@ -68,10 +73,6 @@ $bot->addListener(function ($event) use ($data, $bot) {
     asort($distances);
     $key = array_keys($distances)[0];
     showShopData($bot, $event, $data, $key);
-    return;
-  }
-  if ($event instanceof PostbackEvent) {
-    $event->getPostbackData();
     return;
   }
   if (!($event instanceof TextMessage)) {
