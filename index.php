@@ -11,6 +11,7 @@ use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
+use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
@@ -37,7 +38,8 @@ function showShopData($data, $key)
               $business_hours . PHP_EOL . $tel,
               $image . '.jpg',
               [
-                  new MessageTemplateActionBuilder('button', 'button'),
+                  new UriTemplateActionBuilder($tel, $tel),
+                  new MessageTemplateActionBuilder($tel, $tel)
               ]
           )
       ))
