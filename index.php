@@ -38,7 +38,7 @@ function showShopData($data, $key)
               $business_hours . PHP_EOL . $tel,
               $image . '.jpg',
               [
-                  new UriTemplateActionBuilder($tel, $tel),
+                  new UriTemplateActionBuilder($tel, 'tel:' . $tel),
                   new MessageTemplateActionBuilder($tel, $tel)
               ]
           )
