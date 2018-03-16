@@ -49,7 +49,10 @@ class Bot
 
   public function replyMessage($replyToken, MessageBuilder $messageBuilder)
   {
-    return $this->lineBot->replyMessage($replyToken, $messageBuilder);
+    $response = $this->lineBot->replyMessage($replyToken, $messageBuilder);
+    if (!$response->isSucceeded()) {
+      error_log('Failed!' . $response->getHTTPStatus() . ' ' . $response->getRawBody());
+    }
   }
 
   public function createShopDataParams($key)
