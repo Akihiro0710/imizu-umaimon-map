@@ -34,7 +34,7 @@ function showShopData($data, $key)
           $title,
           new ButtonTemplateBuilder(
               $title,
-              'text',
+              $business_hours . $tel . $summary,
               $image . '.jpg',
               [
                   new MessageTemplateActionBuilder('button', 'button'),
