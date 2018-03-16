@@ -34,7 +34,7 @@ function showShopData($data, $key)
           $title,
           new ButtonTemplateBuilder(
               $title,
-              implode(PHP_EOL, [$business_hours, $tel, $summary]),
+              'text',
               $image . '.jpg',
               [
                   new MessageTemplateActionBuilder('button', 'button'),
