@@ -29,22 +29,16 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
   $shop['id'] = $key;
   $title = $shop['name'];
   $business_hours = $shop['business_hours'];
-  $tel = $shop['tel'];
+  $summary = $shop['summary'];
   $image = "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg";
-  $alt = <<<EOT
-$title
-営業時間：$business_hours
-電話番号：$tel
-EOT;
 
   $messageBuilder = new TemplateMessageBuilder(
-      $alt,
+      $title,
       new ButtonTemplateBuilder(
           $title,
-          '営業時間：' . $business_hours,
+          substr($summary, 0, 58) . '…',
           $image,
           [
-              new UriTemplateActionBuilder($tel, 'tel:' . $tel),
               new PostbackTemplateActionBuilder('詳細を見る', $key)
           ]
       )
@@ -63,10 +57,16 @@ function showShopDetail(Bot $bot, BaseEvent $event, $data, $key)
   $address = $shop['address'];
   $lat = $shop['lat'];
   $lon = $shop['lon'];
+  $alt = <<<EOT
+$title
+営業時間：$business_hours
+電話番号：$tel
+住所：$address
+EOT;
   $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   $messageBuilder = (new MultiMessageBuilder())
       ->add(new TemplateMessageBuilder(
-          $title . PHP_EOL . $business_hours . PHP_EOL . $tel,
+          $alt,
           new ButtonTemplateBuilder(
               $title,
               $business_hours,
