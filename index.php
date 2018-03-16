@@ -43,7 +43,7 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
               $image . '.jpg',
               [
                   new UriTemplateActionBuilder($tel, 'tel:' . $tel),
-                  new PostbackTemplateActionBuilder('詳細を見る', json_encode($shop))
+                  new PostbackTemplateActionBuilder('詳細を見る', $key)
               ]
           )
       ))
@@ -54,9 +54,7 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
 
 $bot->addListener(function ($event) use ($data, $bot) {
   if ($event instanceof PostbackEvent) {
-    $data = json_decode($event->getPostbackData(), true);
-    $key = $data['id'];
-    $data = [$key => $data];
+    $key = $event->getPostbackData();
     showShopData($bot, $event, $data, $key);
     return;
   }
