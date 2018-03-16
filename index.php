@@ -29,6 +29,7 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
   $shop['id'] = $key;
   $title = $shop['name'];
   $summary = $shop['summary'];
+  error_log($summary);
   $messageBuilder = new TemplateMessageBuilder(
       $title,
       new ButtonTemplateBuilder(
