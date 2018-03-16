@@ -10,6 +10,7 @@ use LINE\LINEBot\MessageBuilder\StickerMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
@@ -35,8 +36,10 @@ function showShopData($data, $key)
           new ButtonTemplateBuilder(
               'title',
               'text',
-              null,
-              []
+              $image . '.jpg',
+              [
+                  new MessageTemplateActionBuilder('button', 'button')
+              ]
           )
       ))
       ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
