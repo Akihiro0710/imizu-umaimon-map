@@ -11,14 +11,21 @@ use LINE\LINEBot\MessageBuilder\StickerMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
-use LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
-use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
 
 
 $bot = new Bot();
+function showShopsData(Bot $bot, BaseEvent $event, $keys)
+{
+  $key = $keys[0];
+  $messageBuilder = new TemplateMessageBuilder(
+      $bot->data[$key]['name'],
+      new ButtonTemplateBuilder(...$bot->createShopDataParams($key))
+  );
+  $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+}
 
 function showShopData(Bot $bot, BaseEvent $event, $key)
 {
@@ -77,8 +84,7 @@ $bot->addListener(function ($event) use ($bot) {
       $distances[$key] = sqrt(($lat - $evLat) ** 2 + ($lon - $evLon) ** 2);
     }
     asort($distances);
-    $key = array_keys($distances)[0];
-    showShopData($bot, $event, $key);
+    showShopsData($bot, $event, array_keys($distances));
     return;
   }
   if (!($event instanceof TextMessage)) {
@@ -90,7 +96,7 @@ $bot->addListener(function ($event) use ($bot) {
   shuffle($keys);
   switch ($text) {
     case 'うまいもん':
-      showShopData($bot, $event, $keys[0]);
+      showShopsData($bot, $event, $keys);
       break;
     default:
       if (in_array($text, $keys)) {
