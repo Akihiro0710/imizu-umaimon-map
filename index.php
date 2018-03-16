@@ -32,14 +32,13 @@ function showShopData($data, $key)
   $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   return (new MultiMessageBuilder())
       ->add(new TemplateMessageBuilder(
-          $title,
+          $title . PHP_EOL . $business_hours . PHP_EOL . $tel,
           new ButtonTemplateBuilder(
               $title,
-              $business_hours . PHP_EOL . $tel,
+              $business_hours,
               $image . '.jpg',
               [
-                  new UriTemplateActionBuilder($tel, 'tel:' . $tel),
-                  new MessageTemplateActionBuilder($tel, $tel)
+                  new UriTemplateActionBuilder($tel, 'tel:' . $tel)
               ]
           )
       ))
