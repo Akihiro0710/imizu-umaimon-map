@@ -9,6 +9,7 @@ use LINE\LINEBot\MessageBuilder\LocationMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\StickerMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -23,7 +24,7 @@ function showShopsData(Bot $bot, BaseEvent $event, $text, $keys)
   $columns = [];
   for ($i = 0, $n = count($keys); $i < 5 && $i < $n; $i++) {
     $key = $keys[$i];
-    $columns[] = new ButtonTemplateBuilder(...$bot->createShopDataParams($key));
+    $columns[] = new CarouselColumnTemplateBuilder(...$bot->createShopDataParams($key));
   }
   $messageBuilder = new TemplateMessageBuilder($text, new CarouselTemplateBuilder($columns));
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
