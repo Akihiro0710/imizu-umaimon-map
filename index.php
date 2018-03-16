@@ -23,8 +23,8 @@ function showShopsData(Bot $bot, BaseEvent $event, $text, $keys)
 {
   $columns = [];
   for ($i = 0, $n = count($keys); $i < 5 && $i < $n; $i++) {
-    $params = $bot->createShopDataParams($keys[$i]);
-    $columns[] = new CarouselColumnTemplateBuilder(...$params);
+    $key = $keys[$i];
+    $columns[] = new CarouselColumnTemplateBuilder(...$bot->createShopDataParams($key));
   }
   $messageBuilder = new TemplateMessageBuilder($text, new CarouselTemplateBuilder($columns));
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
@@ -96,12 +96,20 @@ $bot->addListener(function ($event) use ($bot) {
   $data = $bot->data;
   $text = $event->getText();
   $keys = array_keys($data);
-  if (in_array($text, $keys)) {
-    showShopData($bot, $event, $text);
-  }
   shuffle($keys);
-  if ($text === 'うまいもん') {
-    showShopsData($bot, $event, 'うまいもんをランダムに紹介するよ', $keys);
+  switch ($text) {
+    case 'うまいもん':
+      showShopsData($bot, $event, 'うまいもんをランダムに紹介するよ', $keys);
+      break;
+    default:
+      if (in_array($text, $keys)) {
+        showShopData($bot, $event, $text);
+      } else {
+        $messageBuilder = (new MultiMessageBuilder())
+            ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
+            ->add(new StickerMessageBuilder(1, 4));
+        $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+      }
   }
 });
 $bot->execute();
