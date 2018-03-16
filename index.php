@@ -31,7 +31,7 @@ function showShopData($data, $key)
   $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   return (new MultiMessageBuilder())
       ->add(new TemplateMessageBuilder(
-          implode(PHP_EOL, [$title, $business_hours, $tel, $summary]),
+          $title,
           new ButtonTemplateBuilder(
               $title,
               implode(PHP_EOL, [$business_hours, $tel, $summary]),
