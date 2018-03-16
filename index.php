@@ -30,13 +30,13 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
   $title = $shop['name'];
   $summary = $shop['summary'];
   if (mb_strlen($summary) > 60) {
-    $summary = mb_substr($summary, 0, 60) . '…';
+    $summary = mb_substr($summary, 0, 59) . '…';
   }
   $messageBuilder = new TemplateMessageBuilder(
       $title,
       new ButtonTemplateBuilder(
           $title,
-          mb_strlen($summary),
+          $summary,
           "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg",
           [
               new PostbackTemplateActionBuilder('詳細を見る', $key)
