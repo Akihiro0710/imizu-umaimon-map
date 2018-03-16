@@ -28,6 +28,7 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
   $shop = $data[$key];
   $shop['id'] = $key;
   $title = $shop['name'];
+  $tel = $shop['tel'];
   $summary = $shop['summary'];
   if (mb_strlen($summary) > 60) {
     $summary = mb_substr($summary, 0, 59) . '…';
@@ -39,6 +40,7 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
           $summary,
           "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg",
           [
+              new UriTemplateActionBuilder($tel, 'tel:' . $tel),
               new PostbackTemplateActionBuilder('詳細を見る', $key)
           ]
       )
@@ -57,26 +59,17 @@ function showShopDetail(Bot $bot, BaseEvent $event, $data, $key)
   $address = $shop['address'];
   $lat = $shop['lat'];
   $lon = $shop['lon'];
-  $alt = <<<EOT
+  $discription = <<<EOT
 $title
+------------------
 営業時間：$business_hours
 電話番号：$tel
 住所：$address
+
+$summary
 EOT;
-  $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   $messageBuilder = (new MultiMessageBuilder())
-      ->add(new TemplateMessageBuilder(
-          $alt,
-          new ButtonTemplateBuilder(
-              $title,
-              $business_hours,
-              $image . '.jpg',
-              [
-                  new UriTemplateActionBuilder($tel, 'tel:' . $tel),
-              ]
-          )
-      ))
-      ->add(new TextMessageBuilder($summary))
+      ->add(new TextMessageBuilder($discription))
       ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
 }
