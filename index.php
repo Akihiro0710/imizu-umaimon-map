@@ -3,6 +3,7 @@
 use LINE\LINEBot\Event\MessageEvent;
 use LINE\LINEBot\Event\MessageEvent\LocationMessage;
 use LINE\LINEBot\Event\MessageEvent\TextMessage;
+use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\LocationMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\StickerMessageBuilder;
@@ -10,23 +11,28 @@ use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/Bot.php';
-function showShopData($data)
+
+
+$bot = new Bot();
+$data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
+function showShopData($data, $key)
 {
-  $title = $data['name'];
-  $summary = $data['summary'];
-  $business_hours = $data['business_hours'];
-  $tel = $data['tel'];
-  $address = $data['address'];
-  $lat = $data['lat'];
-  $lon = $data['lon'];
+  $shop = $data[$key];
+  $title = $shop['name'];
+  $summary = $shop['summary'];
+  $business_hours = $shop['business_hours'];
+  $tel = $shop['tel'];
+  $address = $shop['address'];
+  $lat = $shop['lat'];
+  $lon = $shop['lon'];
+  $image = (empty($_SERVER["HTTPS"]) ? "http://" : "https://") . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   return (new MultiMessageBuilder())
       ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])))
+      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
       ->add(new TextMessageBuilder($summary))
       ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
 }
 
-$bot = new Bot();
-$data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
 $bot->addListener(function ($event) use ($data, $bot) {
   if (!($event instanceof MessageEvent)) {
     return;
@@ -42,8 +48,7 @@ $bot->addListener(function ($event) use ($data, $bot) {
     }
     asort($distances);
     $key = array_keys($distances)[0];
-    $shop = $data[$key];
-    $messageBuilder = showShopData($shop);
+    $messageBuilder = showShopData($data, $key);
     $bot->replyMessage($event->getReplyToken(), $messageBuilder);
     return;
   }
@@ -54,13 +59,12 @@ $bot->addListener(function ($event) use ($data, $bot) {
   $keys = array_keys($data);
   switch ($text) {
     case 'うまいもん':
-      $shop = $data[$keys[mt_rand(0, count($keys) - 1)]];
-      $messageBuilder = showShopData($shop);
+      $key = $keys[mt_rand(0, count($keys) - 1)];
+      $messageBuilder = showShopData($data, $key);
       break;
     default:
       if (in_array($text, $keys)) {
-        $shop = $data[$text];
-        $messageBuilder = showShopData($shop);
+        $messageBuilder = showShopData($data, $text);
       } else {
         $messageBuilder = (new MultiMessageBuilder())
             ->add(new TextMessageBuilder('「うまいもん」と呼びかけて下さいね！'))
