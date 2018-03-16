@@ -82,11 +82,14 @@ function showShopDetail(Bot $bot, BaseEvent $event, $data, $key)
 }
 
 $bot->addListener(function ($event) use ($data, $bot) {
-  if ($event instanceof PostbackEvent) {
-    $key = $event->getPostbackData();
-    showShopData($bot, $event, $data, $key);
-    return;
+  if (!$event instanceof PostbackEvent) {
+    return false;
   }
+  $key = $event->getPostbackData();
+  showShopDetail($bot, $event, $data, $key);
+  return true;
+});
+$bot->addListener(function ($event) use ($data, $bot) {
   if (!($event instanceof MessageEvent)) {
     return;
   }
