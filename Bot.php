@@ -4,6 +4,8 @@ use LINE\LINEBot;
 use LINE\LINEBot\Constant\HTTPHeader;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot\MessageBuilder;
+use LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
+use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -48,5 +50,25 @@ class Bot
   public function replyMessage($replyToken, MessageBuilder $messageBuilder)
   {
     return $this->lineBot->replyMessage($replyToken, $messageBuilder);
+  }
+
+  public function createShopDataParams($key)
+  {
+    $shop = $this->data[$key];
+    $title = $shop['name'];
+    $tel = $shop['tel'];
+    $summary = $shop['summary'];
+    if (mb_strlen($summary) > 60) {
+      $summary = mb_substr($summary, 0, 59) . '…';
+    }
+    return [
+        $title,
+        $summary,
+        "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg",
+        [
+            new UriTemplateActionBuilder($tel, 'tel:' . $tel),
+            new PostbackTemplateActionBuilder('詳細を見る', $key)
+        ]
+    ];
   }
 }

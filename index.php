@@ -22,24 +22,9 @@ $bot = new Bot();
 
 function showShopData(Bot $bot, BaseEvent $event, $key)
 {
-  $shop = $bot->data[$key];
-  $title = $shop['name'];
-  $tel = $shop['tel'];
-  $summary = $shop['summary'];
-  if (mb_strlen($summary) > 60) {
-    $summary = mb_substr($summary, 0, 59) . '…';
-  }
   $messageBuilder = new TemplateMessageBuilder(
-      $title,
-      new ButtonTemplateBuilder(
-          $title,
-          $summary,
-          "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg",
-          [
-              new UriTemplateActionBuilder($tel, 'tel:' . $tel),
-              new PostbackTemplateActionBuilder('詳細を見る', $key)
-          ]
-      )
+      $bot->data[$key]['name'],
+      new ButtonTemplateBuilder(...$bot->createShopDataParams($key))
   );
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
 }
