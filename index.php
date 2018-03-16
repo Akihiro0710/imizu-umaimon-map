@@ -40,9 +40,9 @@ function showShopData($data, $key)
                   new MessageTemplateActionBuilder('button', 'button'),
               ]
           )
-      ))
-      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
-      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
+      ));
+//      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
+//      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
 }
 
 $bot->addListener(function ($event) use ($data, $bot) {
