@@ -7,6 +7,8 @@ use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\LocationMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\StickerMessageBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -28,6 +30,15 @@ function showShopData($data, $key)
   $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   return (new MultiMessageBuilder())
       ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])))
+      ->add(new TemplateMessageBuilder(
+          '',
+          new ButtonTemplateBuilder(
+              'title',
+              'text',
+              null,
+              []
+          )
+      ))
       ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
       ->add(new TextMessageBuilder($summary))
       ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
