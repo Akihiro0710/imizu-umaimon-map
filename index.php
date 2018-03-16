@@ -22,7 +22,37 @@ require_once __DIR__ . '/Bot.php';
 
 $bot = new Bot();
 $data = json_decode(file_get_contents(__DIR__ . '/umaimon.json'), true);
+
 function showShopData(Bot $bot, BaseEvent $event, $data, $key)
+{
+  $shop = $data[$key];
+  $shop['id'] = $key;
+  $title = $shop['name'];
+  $business_hours = $shop['business_hours'];
+  $tel = $shop['tel'];
+  $image = "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg";
+  $alt = <<<EOT
+$title
+営業時間：$business_hours
+電話番号：$tel
+EOT;
+
+  $messageBuilder = new TemplateMessageBuilder(
+      $alt,
+      new ButtonTemplateBuilder(
+          $title,
+          '営業時間：' . $business_hours,
+          $image,
+          [
+              new UriTemplateActionBuilder($tel, 'tel:' . $tel),
+              new PostbackTemplateActionBuilder('詳細を見る', $key)
+          ]
+      )
+  );
+  $bot->replyMessage($event->getReplyToken(), $messageBuilder);
+}
+
+function showShopDetail(Bot $bot, BaseEvent $event, $data, $key)
 {
   $shop = $data[$key];
   $shop['id'] = $key;
@@ -43,7 +73,6 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
               $image . '.jpg',
               [
                   new UriTemplateActionBuilder($tel, 'tel:' . $tel),
-                  new PostbackTemplateActionBuilder('詳細を見る', $key)
               ]
           )
       ))
