@@ -61,7 +61,7 @@ function showShopDetail(Bot $bot, BaseEvent $event, $data, $key)
   $lon = $shop['lon'];
   $discription = <<<EOT
 $title
-◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇
+＝＝＝＝＝＝＝＝＝＝
 営業時間：$business_hours
 電話番号：$tel
 住所：$address
