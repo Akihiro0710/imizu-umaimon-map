@@ -34,7 +34,7 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
       $title,
       new ButtonTemplateBuilder(
           $title,
-          mb_substr($summary, 0, 60),
+          mb_strlen($summary),
           "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg",
           [
               new PostbackTemplateActionBuilder('詳細を見る', $key)
