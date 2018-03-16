@@ -29,23 +29,23 @@ function showShopData($data, $key)
   $lat = $shop['lat'];
   $lon = $shop['lon'];
   $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
-//  return (new MultiMessageBuilder())
+  return (new MultiMessageBuilder())
+      ->add(new TemplateMessageBuilder(
+          'alt',
+          new ButtonTemplateBuilder(
+              'title',
+              'text',
+              $image . '.jpg',
+              [
+                  new MessageTemplateActionBuilder('button', 'button'),
+              ]
+          )
+      ));
 //      ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])))
 //      ->add()
 //      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
 //      ->add(new TextMessageBuilder($summary))
 //      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
-  return new TemplateMessageBuilder(
-      'alt',
-      new ButtonTemplateBuilder(
-          'title',
-          'text',
-          $image . '.jpg',
-          [
-              new MessageTemplateActionBuilder('button', 'button')
-          ]
-      )
-  );
 }
 
 $bot->addListener(function ($event) use ($data, $bot) {
