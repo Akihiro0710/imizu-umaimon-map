@@ -17,11 +17,11 @@ require_once __DIR__ . '/Bot.php';
 
 
 $bot = new Bot();
-function showShopsData(Bot $bot, BaseEvent $event, $keys)
+function showShopsData(Bot $bot, BaseEvent $event, $text, $keys)
 {
   $key = $keys[0];
   $messageBuilder = new TemplateMessageBuilder(
-      $bot->data[$key]['name'],
+      $text,
       new ButtonTemplateBuilder(...$bot->createShopDataParams($key))
   );
   $bot->replyMessage($event->getReplyToken(), $messageBuilder);
@@ -84,7 +84,7 @@ $bot->addListener(function ($event) use ($bot) {
       $distances[$key] = sqrt(($lat - $evLat) ** 2 + ($lon - $evLon) ** 2);
     }
     asort($distances);
-    showShopsData($bot, $event, array_keys($distances));
+    showShopsData($bot, $event, '近場のうまいもんを紹介するよ', array_keys($distances));
     return;
   }
   if (!($event instanceof TextMessage)) {
@@ -96,7 +96,7 @@ $bot->addListener(function ($event) use ($bot) {
   shuffle($keys);
   switch ($text) {
     case 'うまいもん':
-      showShopsData($bot, $event, $keys);
+      showShopsData($bot, $event, 'うまいもんをランダムに紹介するよ', $keys);
       break;
     default:
       if (in_array($text, $keys)) {
