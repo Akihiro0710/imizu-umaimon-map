@@ -34,15 +34,15 @@ function showShopData($data, $key)
           $title,
           new ButtonTemplateBuilder(
               $title,
-              $summary,
+              $business_hours . PHP_EOL . $tel,
               $image . '.jpg',
               [
                   new MessageTemplateActionBuilder('button', 'button'),
               ]
           )
-      ));
-//      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
-//      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
+      ))
+      ->add(new TextMessageBuilder($summary))
+      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
 }
 
 $bot->addListener(function ($event) use ($data, $bot) {
