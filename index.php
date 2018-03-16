@@ -25,7 +25,7 @@ function showShopData($data, $key)
   $address = $shop['address'];
   $lat = $shop['lat'];
   $lon = $shop['lon'];
-  $image = (empty($_SERVER["HTTPS"]) ? "http://" : "https://") . $_SERVER["HTTP_HOST"] . '/images/' . $key;
+  $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   return (new MultiMessageBuilder())
       ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])))
       ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
