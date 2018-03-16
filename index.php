@@ -55,7 +55,9 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
 $bot->addListener(function ($event) use ($data, $bot) {
   if ($event instanceof PostbackEvent) {
     $data = json_decode($event->getPostbackData(), true);
-    showShopData($bot, $event, $data, $data['id']);
+    $key = $data['id'];
+    $data = [$key => $data];
+    showShopData($bot, $event, $data, $key);
     return;
   }
   if (!($event instanceof MessageEvent)) {
