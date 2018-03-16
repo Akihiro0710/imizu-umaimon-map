@@ -28,16 +28,13 @@ function showShopData(Bot $bot, BaseEvent $event, $data, $key)
   $shop = $data[$key];
   $shop['id'] = $key;
   $title = $shop['name'];
-  $business_hours = $shop['business_hours'];
   $summary = $shop['summary'];
-  $image = "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg";
-
   $messageBuilder = new TemplateMessageBuilder(
       $title,
       new ButtonTemplateBuilder(
           $title,
-          substr($summary, 0, 58) . '…',
-          $image,
+          substr($summary, 0, 5) . '…',
+          "https://{$_SERVER["HTTP_HOST"]}/images/{$key}.jpg",
           [
               new PostbackTemplateActionBuilder('詳細を見る', $key)
           ]
