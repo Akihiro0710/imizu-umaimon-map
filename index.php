@@ -31,21 +31,18 @@ function showShopData($data, $key)
   $image = "https://" . $_SERVER["HTTP_HOST"] . '/images/' . $key;
   return (new MultiMessageBuilder())
       ->add(new TemplateMessageBuilder(
-          'alt',
+          implode(PHP_EOL, [$title, $business_hours, $tel, $summary]),
           new ButtonTemplateBuilder(
-              'title',
-              'text',
+              $title,
+              implode(PHP_EOL, [$business_hours, $tel, $summary]),
               $image . '.jpg',
               [
                   new MessageTemplateActionBuilder('button', 'button'),
               ]
           )
       ))
-      ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])));
-//      ->add()
-//      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
-//      ->add(new TextMessageBuilder($summary))
-//      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
+      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
+      ->add(new LocationMessageBuilder($title, $address, $lat, $lon));
 }
 
 $bot->addListener(function ($event) use ($data, $bot) {
