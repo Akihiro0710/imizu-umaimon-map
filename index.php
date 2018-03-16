@@ -40,8 +40,8 @@ function showShopData($data, $key)
                   new MessageTemplateActionBuilder('button', 'button'),
               ]
           )
-      ));
-//      ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])))
+      ))
+      ->add(new TextMessageBuilder(implode(PHP_EOL, [$title, $business_hours, $tel])));
 //      ->add()
 //      ->add(new ImageMessageBuilder($image . '.jpg', $image . '-s.jpg'))
 //      ->add(new TextMessageBuilder($summary))
